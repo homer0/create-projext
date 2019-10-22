@@ -11,7 +11,6 @@ const {
 const appPackage = require('../../package.json');
 const localManifest = require('../../manifest.json');
 
-const constants = require('../constants');
 const services = require('../services');
 
 class CreateProjext extends Jimple {
@@ -27,14 +26,13 @@ class CreateProjext extends Jimple {
     this.register(packageInfo);
     this.register(pathUtils);
 
-    this.register(constants);
     this.register(services);
 
     this._addErrorHandler();
   }
 
   start() {
-    this.get('cli').runHandler();
+    this.get('cli').run();
   }
 
   _addErrorHandler() {

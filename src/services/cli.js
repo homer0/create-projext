@@ -3,7 +3,6 @@ const { provider } = require('jimple');
 const minimist = require('minimist');
 const { Spinner } = require('cli-spinner');
 
-const OPTIONS_TABLE_MIN_WIDTH = 20;
 const HEADER_MIN_WIDTH = 32;
 
 class CLI {
@@ -81,7 +80,7 @@ class CLI {
     ];
   }
 
-  runHandler() {
+  run() {
     const cmdArgsPosition = 2;
     const args = minimist(process.argv.slice(cmdArgsPosition));
     const handler = this._handlers.find(({ triggers }) => (
@@ -121,7 +120,7 @@ class CLI {
     this._logger.log(this._info.version);
   }
 
-  _createOptionsTable(minWidth = OPTIONS_TABLE_MIN_WIDTH) {
+  _createOptionsTable() {
     const useOptions = this._options
     .filter((option) => !option.hidden)
     .map((option) => Object.assign({}, option, {
@@ -138,7 +137,7 @@ class CLI {
           labelPlusSpacing :
           currentWidth;
       },
-      minWidth
+      0
     );
 
     return useOptions.map((option) => {
@@ -147,7 +146,7 @@ class CLI {
     });
   }
 
-  _createHader(minWidth = HEADER_MIN_WIDTH) {
+  _createHeader(minWidth = HEADER_MIN_WIDTH) {
     const lines = [
       `Projext setup - v${this._info.version}`,
       this._info.homepage,
@@ -182,7 +181,7 @@ class CLI {
 
   _askQuestions(args) {
     clear();
-    this._logger.log(this._createHader());
+    this._logger.log(this._createHeader());
     this._logger.log('');
 
     const { _: [nameFromArgs] } = args;

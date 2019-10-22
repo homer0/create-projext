@@ -19,10 +19,10 @@ class Generator {
       manifest.frameworks.find((item) => item.id === projectInfo.framework) :
       null;
     const packageJSON = this._getPackageJSON(
+      projectInfo.name,
       engine,
       framework,
       manifest,
-      projectInfo,
       targetsInfo
     );
     const jsonIndent = 2;
@@ -38,9 +38,10 @@ class Generator {
 
     if (createConfigFile) {
       const projextConfig = this._generateProjextConfig(targetsConfig);
+      const projextConfigJS = this._utils.jsStringify(projextConfig);
       files.push({
         filepath: path.join(projectInfo.path, 'projext.config.js'),
-        contents: this._utils.jsStringify(projextConfig),
+        contents: `module.exports = ${projextConfigJS};\n`,
       });
     }
 
@@ -96,20 +97,17 @@ class Generator {
     const lines = Object.keys(data).reduce(
       (newLines, key) => {
         const value = data[key];
-        let nextLines;
-        if (typeof value === 'undefined') {
-          nextLines = newLines;
-        } else {
-          nextLines = [
-            ...newLines,
-            ` * ${key}: ${value}`,
-          ];
-        }
-
-        return nextLines;
+        return [
+          ...newLines,
+          ` * ${key}: ${value}`,
+        ];
       },
       []
     );
+
+    if (target.framework) {
+      lines.push(` * framework: ${target.framework}`);
+    }
 
     let result;
     if (lines.length) {
@@ -191,10 +189,10 @@ class Generator {
   }
 
   _getPackageJSON(
+    projectName,
     engine,
     framework,
     manifest,
-    projectInfo,
     targetsInfo
   ) {
     let dependencies;
@@ -202,8 +200,8 @@ class Generator {
     let scripts;
     const devPackages = manifest.base.packages.slice();
     devPackages.push(engine.package);
-    if (projectInfo.framework) {
-      devPackages.push(framework.packages[projectInfo.engine]);
+    if (framework) {
+      devPackages.push(framework.packages[engine.id]);
       const atLeastOneSSR = targetsInfo.some((target) => (
         target.type === 'node' &&
         target.framework
@@ -250,7 +248,7 @@ class Generator {
     }
 
     return {
-      name: projectInfo.name,
+      name: projectName,
       dependencies,
       devDependencies,
       scripts,

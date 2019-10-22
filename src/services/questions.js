@@ -1,6 +1,6 @@
 const { provider } = require('jimple');
 const fs = require('fs-extra');
-const inquirer = require('inquirer');
+const { prompt } = require('inquirer');
 
 class Questions {
   constructor(
@@ -52,47 +52,45 @@ class Questions {
         });
       }
 
-      if (typeof defaults.framework === 'undefined') {
-        questions.push({
-          name: 'framework',
-          message: 'Install a framework?',
-          when: (answers) => {
-            let show = true;
-            if (defaults.framework) {
-              const useFramework = this._frameworks.find((framework) => (
-                framework.id === defaults.framework
-              ));
-              if (useFramework) {
-                const useEngine = answers.engine || defaults.engine;
-                if (useFramework.engines.includes(useEngine)) {
-                  show = false;
-                }
+      questions.push({
+        name: 'framework',
+        message: 'Install a framework?',
+        when: (answers) => {
+          let show = true;
+          if (defaults.framework) {
+            const useFramework = this._frameworks.find((framework) => (
+              framework.id === defaults.framework
+            ));
+            if (useFramework) {
+              const useEngine = answers.engine || defaults.engine;
+              if (useFramework.engines.includes(useEngine)) {
+                show = false;
               }
             }
+          }
 
-            return show;
-          },
-          type: 'list',
-          choices: (answers) => {
-            const useEngine = answers.engine || defaults.engine;
-            const frameworks = this._frameworks
-            .filter((framework) => framework.engines.includes(useEngine))
-            .map((framework) => ({
-              name: framework.name,
-              value: framework.id,
-            }));
+          return show;
+        },
+        type: 'list',
+        choices: (answers) => {
+          const useEngine = answers.engine || defaults.engine;
+          const frameworks = this._frameworks
+          .filter((framework) => framework.engines.includes(useEngine))
+          .map((framework) => ({
+            name: framework.name,
+            value: framework.id,
+          }));
 
-            return [
-              {
-                name: 'Nop',
-                value: false,
-              },
-              ...frameworks,
-            ];
-          },
-          default: false,
-        });
-      }
+          return [
+            {
+              name: 'Nop',
+              value: false,
+            },
+            ...frameworks,
+          ];
+        },
+        default: false,
+      });
 
       if (!defaults.targetsCount) {
         const MAX_TARGETS_COUNT = 5;
@@ -111,15 +109,8 @@ class Questions {
         });
       }
 
-      let nextStep;
-      if (questions.length) {
-        this._logger.log(['+ Project information', '']);
-        nextStep = inquirer.prompt(questions);
-      } else {
-        nextStep = {};
-      }
-
-      return nextStep;
+      this._logger.log(['+ Project information', '']);
+      return prompt(questions);
     })
     .then((answers) => {
       const final = Object.assign({}, defaults, answers);
@@ -128,11 +119,16 @@ class Questions {
     });
   }
 
-  askAboutTheTargets(projectsInfo) {
+  askAboutTheTargets(projectInfo) {
+    const ssrSupport = projectInfo.framework &&
+      this._frameworks.some((framework) => (
+        framework.id === projectInfo.framework &&
+        framework.ssr
+      ));
     const firstStep = (
-      projectsInfo.targetsCount > 1 ?
-        this._askQuestionsForTargets(projectsInfo) :
-        this._askQuestionsForSingleTarget(projectsInfo)
+      projectInfo.targetsCount > 1 ?
+        this._askQuestionsForTargets(projectInfo, ssrSupport) :
+        this._askQuestionsForSingleTarget(projectInfo, ssrSupport)
     );
 
     return firstStep
@@ -152,27 +148,26 @@ class Questions {
     ));
   }
 
-  _askQuestionsForTargets(projectsInfo) {
-    const questions = (new Array(projectsInfo.targetsCount))
+  _askQuestionsForTargets(projectInfo, ssrSupport) {
+    const questions = (new Array(projectInfo.targetsCount))
     .fill('')
-    .map((_, index) => this._getQuestionsForTarget(index, projectsInfo))
+    .map((_, index) => this._getQuestionsForTarget(
+      index,
+      projectInfo,
+      ssrSupport
+    ))
     .reduce((acc, list) => [...acc, ...list], []);
 
     this._logger.log(['', '+ Targets information', '']);
 
-    return inquirer.prompt(questions);
+    return prompt(questions);
   }
 
-  _askQuestionsForSingleTarget(projectsInfo) {
+  _askQuestionsForSingleTarget(projectInfo, ssrSupport) {
     const index = 0;
     const defaults = {};
     const questions = [];
-    const supportsSSR = projectsInfo.framework &&
-      this._frameworks.find((framework) => (
-        framework.id === projectsInfo.framework &&
-        framework.ssr
-      ));
-    if (supportsSSR) {
+    if (ssrSupport) {
       questions.push(...[
         {
           name: `${index}-type`,
@@ -192,13 +187,13 @@ class Questions {
         },
         {
           name: `${index}-framework`,
-          message: 'The target will do SSR with React',
+          message: 'The target will do SSR?',
           when: (answers) => answers[`${index}-type`] === 'node',
           type: 'confirm',
           default: false,
         },
       ]);
-    } else if (projectsInfo.framework) {
+    } else if (projectInfo.framework) {
       defaults[`${index}-type`] = 'browser';
     }
 
@@ -209,11 +204,11 @@ class Questions {
 
     this._logger.log(['', '+ Target information', '']);
 
-    return inquirer.prompt(questions)
+    return prompt(questions)
     .then((answers) => Object.assign({}, defaults, answers));
   }
 
-  _getQuestionsForTarget(index, projectsInfo) {
+  _getQuestionsForTarget(index, projectInfo, ssrSupport) {
     const number = index + 1;
     return [
       {
@@ -239,14 +234,12 @@ class Questions {
       },
       {
         name: `${index}-framework`,
-        message: `The target will do SSR with React (${number})`,
-        when: (answers) => (
-          answers[`${index}-type`] === 'node' &&
-          projectsInfo.framework &&
-          this._frameworks.find((framework) => (
-            framework.id === projectsInfo.framework &&
-            framework.ssr
-          ))
+        message: `The target will use the framework: ${projectInfo.framework} (${number})`,
+        when: (answers) => !!(
+          projectInfo.framework && (
+            answers[`${index}-type`] === 'browser' ||
+            ssrSupport
+          )
         ),
         type: 'confirm',
         default: false,

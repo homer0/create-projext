@@ -18,7 +18,7 @@ class Utils {
         stdio: 'ignore',
         cwd: projectPath,
       };
-      child = this.usesYarn ?
+      child = this.usesYarn() ?
         spawn('yarn', [], options) :
         spawn('npm', ['install'], options);
 
@@ -32,7 +32,7 @@ class Utils {
 
   jsStringify(obj) {
     const jsonIndentation = 2;
-    const json = JSON.stringify(obj, undefined, jsonIndentation)
+    return JSON.stringify(obj, undefined, jsonIndentation)
     // Escape single quotes.
     .replace(/'/g, '\\\'')
     // Replace double quotes with single quotes.
@@ -46,8 +46,6 @@ class Utils {
      */
     .replace(/([\]|}|\w|'])(\n(?:\s+)?[}|\]])/g, '$1,$2')
     .replace(/([\]|}])(\n(?:\s+)?[}|\]])/g, '$1,$2');
-
-    return `module.exports = ${json};\n`;
   }
 }
 
