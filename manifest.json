@@ -1,0 +1,128 @@
+{
+  "base": {
+    "packages": [
+      {
+        "name": "projext",
+        "version": "7.1.1"
+      }
+    ]
+  },
+  "scripts": {
+    "multiTarget": {
+      "build:${name}": "projext build ${name} --type production",
+      "start:${name}": "projext run ${name}"
+    },
+    "singleTarget": {
+      "build": "projext build --type production",
+      "start": "projext run"
+    }
+  },
+  "engines": [
+    {
+      "id": "webpack",
+      "name": "webpack",
+      "package": {
+        "name": "projext-plugin-webpack",
+        "version": "9.2.0"
+      },
+      "default": true
+    },
+    {
+      "id": "rollup",
+      "name": "Rollup",
+      "package": {
+        "name": "projext-plugin-rollup",
+        "version": "9.2.0"
+      }
+    }
+  ],
+  "frameworks": [
+    {
+      "id": "angularjs",
+      "name": "AngularJS",
+      "ssr": false,
+      "engines": ["webpack", "rollup"],
+      "packages": {
+        "webpack": {
+          "name": "projext-plugin-webpack-angularjs",
+          "version": "5.0.0"
+        },
+        "rollup": {
+          "name": "projext-plugin-rollup-angularjs",
+          "version": "3.0.0"
+        }
+      },
+      "template": {
+        "csr": {
+          "dependencies": {},
+          "devDependencies": {
+            "angular": "^1.7.8"
+          }
+        }
+      }
+    },
+    {
+      "id": "aurelia",
+      "name": "Aurelia",
+      "ssr": false,
+      "engines": ["webpack"],
+      "packages": {
+        "webpack": {
+          "name": "projext-plugin-webpack-aurelia",
+          "version": "2.1.0"
+        }
+      },
+      "template": {
+        "csr": {
+          "dependencies": {},
+          "devDependencies": {
+            "aurelia-bootstrapper": "^2.3.3",
+            "aurelia-fetch-client": "^1.8.2",
+            "aurelia-framework": "^1.3.1",
+            "aurelia-history-browser": "^1.4.0",
+            "aurelia-logging-console": "^1.1.1",
+            "aurelia-pal-browser": "^1.8.1",
+            "aurelia-polyfills": "^1.3.4",
+            "aurelia-templating": "^1.10.2",
+            "aurelia-templating-binding": "^1.5.3",
+            "aurelia-templating-resources": "^1.12.0"
+          }
+        }
+      }
+    },
+    {
+      "id": "react",
+      "name": "React",
+      "ssr": true,
+      "jsx": true,
+      "engines": ["webpack", "rollup"],
+      "packages": {
+        "webpack": {
+          "name": "projext-plugin-webpack-react",
+          "version": "5.0.0"
+        },
+        "rollup": {
+          "name": "projext-plugin-rollup-react",
+          "version": "3.0.0"
+        }
+      },
+      "template": {
+        "ssr": {
+          "dependencies": {
+            "react-dom": "^16.10.2"
+          },
+          "devDependencies": {
+            "react": "^16.10.2"
+          }
+        },
+        "csr": {
+          "dependencies": {},
+          "devDependencies": {
+            "react": "^16.10.2",
+            "react-dom": "^16.10.2"
+          }
+        }
+      }
+    }
+  ]
+}
