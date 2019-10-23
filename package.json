@@ -36,7 +36,7 @@
     },
     "main": "src/index.js",
     "bin": {
-      "create-projext": "./src/bin/create-projext"
+      "create-projext": "./src/index.js"
     },
     "husky": {
       "hooks": {
