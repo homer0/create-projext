@@ -2,7 +2,7 @@
     "name": "create-projext",
     "description": "Setup projext using npm init or yarn create",
     "homepage": "https://projextjs.com",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "repository": "homer0/create-projext",
     "author": "Leonardo Apiwan (@homer0) <me@homer0.com>",
     "license": "MIT",
