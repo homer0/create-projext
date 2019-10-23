@@ -2172,10 +2172,10 @@ esdoc-lint-plugin@^1.0.0:
   resolved "https://registry.yarnpkg.com/esdoc-lint-plugin/-/esdoc-lint-plugin-1.0.2.tgz#4962930c6dc5b25d80cf6eff1b0f3c24609077f7"
   integrity sha512-24AYqD2WbZI9We02I7/6dzAa7yUliRTFUaJCZAcYJMQicJT5gUrNFVaI8XmWEN/mhF3szIn1uZBNWeLul4CmNw==
 
-esdoc-node@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/esdoc-node/-/esdoc-node-1.0.5.tgz#1d5c5f6af558ee783e651bb654252c82ac1562f5"
-  integrity sha512-P065aV7Zat8s5Tz71L8lbcDvOwxSaRQJw/ghlpf83GWz0PJq6LUusTAvoqX6v7VFGVkn91wU9WQzqlTPbHrSWQ==
+esdoc-node@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/esdoc-node/-/esdoc-node-1.0.4.tgz#97fec78a9bbed26f15349c03c9b9e2f8a6baafe5"
+  integrity sha512-th9rhOdO3oFiv9YJWv8+RT2fzILxhvlvT9w0bZJVU9y6glXyA1zAiGrFAAI96HC8ArGOnlXDz6jbTBBAWa3UXg==
 
 esdoc-publish-html-plugin@^1.0.0:
   version "1.1.2"

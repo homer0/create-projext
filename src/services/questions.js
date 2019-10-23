@@ -1,28 +1,75 @@
 const { provider } = require('jimple');
 const fs = require('fs-extra');
 const { prompt } = require('inquirer');
-
+/**
+ * This is the class in charge of asking the user all the necessary questions to
+ * generate a projext project.
+ */
 class Questions {
+  /**
+   * @param {Logger}    logger    To log messages on the console.
+   * @param {PathUtils} pathUtils To generate the project path.
+   */
   constructor(
     logger,
     pathUtils
   ) {
+    /**
+     * A local reference for the `logger` service.
+     * @type {Logger}
+     * @access protected
+     * @ignore
+     */
     this._logger = logger;
+    /**
+     * A local reference for the `pathUtils` service.
+     * @type {PathUtils}
+     * @access protected
+     * @ignore
+     */
     this._pathUtils = pathUtils;
+    /**
+     * The list of {@link Engine}s the class can use for the questions' options.
+     * @type {Array}
+     * @access protected
+     * @ignore
+     */
     this._engines = [];
+    /**
+     * The list of {@link Framework}s the class can use for the questions' options.
+     * @type {Array}
+     * @access protected
+     * @ignore
+     */
     this._frameworks = [];
+    /**
+     * The ID of the default engine that can be selected.
+     * @type {String}
+     * @access protected
+     * @ignore
+     */
     this._defaultEngine = '';
   }
-
+  /**
+   * Sets the list of {@link Engine}s the class can use for the questions' options.
+   * @param {Array} engines The list of {@link Engine}s.
+   */
   setEngines(engines) {
     this._engines = engines;
     this._defaultEngine = this._engines.find((engine) => engine.default).id;
   }
-
+  /**
+   * Sets the list of {@link Framework}s the class can use for the questions' options.
+   * @param {Array} frameworks The list of {@link Framework}s.
+   */
   setFrameworks(frameworks) {
     this._frameworks = frameworks;
   }
-
+  /**
+   * Asks the users the questions related to the project.
+   * @param {ProjectAnswers} [defaults={}] Default values to avoid asking all the questions.
+   * @return {Promise<ProjectAnswers,Error>}
+   */
   askAboutTheProject(defaults = {}) {
     return (
       defaults.name ?
@@ -118,7 +165,11 @@ class Questions {
       return final;
     });
   }
-
+  /**
+   * Asks the user all the questions related to the targets.
+   * @param {ProjectAnswers} projectInfo The project information.
+   * @return {Promise<Array,Error>}
+   */
   askAboutTheTargets(projectInfo) {
     const ssrSupport = projectInfo.framework &&
       this._frameworks.some((framework) => (
@@ -147,7 +198,15 @@ class Questions {
       []
     ));
   }
-
+  /**
+   * Asks the questions for the targets when there's more than one target.
+   * @param {ProjectAnswers} projectInfo The project information.
+   * @param {Boolean}        ssrSupport  Whether or not the project uses a framework that supports
+   *                                     SSR.
+   * @return {Promise<Object,Error>}
+   * @access protected
+   * @ignore
+   */
   _askQuestionsForTargets(projectInfo, ssrSupport) {
     const questions = (new Array(projectInfo.targetsCount))
     .fill('')
@@ -162,7 +221,17 @@ class Questions {
 
     return prompt(questions);
   }
-
+  /**
+   * Asks the question for a single target, when there's only one target for the project.
+   * The difference with {@link Questions#_getQuestionsForTarget} is that this method doesn't
+   * ask for name and framework.
+   * @param {ProjectAnswers} projectInfo The project information.
+   * @param {Boolean}        ssrSupport  Whether or not the project uses a framework that supports
+   *                                     SSR.
+   * @return {Promise<Object,Error>}
+   * @access protected
+   * @ignore
+   */
   _askQuestionsForSingleTarget(projectInfo, ssrSupport) {
     const index = 0;
     const defaults = {};
@@ -207,7 +276,18 @@ class Questions {
     return prompt(questions)
     .then((answers) => Object.assign({}, defaults, answers));
   }
-
+  /**
+   * Asks the question for a single target, when there's more than one target on the project.
+   * The difference with {@link Questions#_askQuestionsForSingleTarget} is that this method doesn't
+   * ask questions, it just generates them for {@link Questions#_askQuestionsForTargets}.
+   * @param {Number}         index       The index of the target on the list.
+   * @param {ProjectAnswers} projectInfo The project information.
+   * @param {Boolean}        ssrSupport  Whether or not the project uses a framework that supports
+   *                                     SSR.
+   * @return {Promise<Object,Error>}
+   * @access protected
+   * @ignore
+   */
   _getQuestionsForTarget(index, projectInfo, ssrSupport) {
     const number = index + 1;
     return [
@@ -248,7 +328,15 @@ class Questions {
       this._getTypesQuestion(index, number),
     ];
   }
-
+  /**
+   * Gets the question for the target mode (app or library).
+   * @param {Number} index      The index of the target on the list.
+   * @param {Number} [number=0] In case this is for a list, this number will be added to the
+   *                            `message` property.
+   * @return {Question}
+   * @access protected
+   * @ignore
+   */
   _getModesQuestion(index, number = 0) {
     const numberLabel = number ?
       ` (${number})` :
@@ -270,7 +358,15 @@ class Questions {
       default: false,
     };
   }
-
+  /**
+   * Gets the question for the target types validation (TypeScript, Flow or none).
+   * @param {Number} index      The index of the target on the list.
+   * @param {Number} [number=0] In case this is for a list, this number will be added to the
+   *                            `message` property.
+   * @return {Question}
+   * @access protected
+   * @ignore
+   */
   _getTypesQuestion(index, number = 0) {
     const numberLabel = number ?
       ` (${number})` :
@@ -296,7 +392,14 @@ class Questions {
       default: false,
     };
   }
-
+  /**
+   * Validates a name to be used for the project name or a target name.
+   * @param {String} name The name to validate.
+   * @return {Boolean|String} This follows {@link Inquirer} validation pattern: If there's an
+   *                          error, it returns the error message, otherwise it returns `true`.
+   * @access protected
+   * @ignore
+   */
   _validateName(name) {
     let result;
     if (name) {
@@ -310,7 +413,15 @@ class Questions {
 
     return result;
   }
-
+  /**
+   * Validates a name to be used as project name. It calls {@link Questions#_validateName} and
+   * then it checks that there's not a directory with the same name on the current path.
+   * @param {String} name The name to validate.
+   * @return {Boolean|String} This follows {@link Inquirer} validation pattern: If there's an
+   *                          error, it returns the error message, otherwise it returns `true`.
+   * @access protected
+   * @ignore
+   */
   _validateProjectName(name) {
     let result;
     const nameValidation = this._validateName(name);
@@ -327,7 +438,14 @@ class Questions {
 
     return result;
   }
-
+  /**
+   * This is a wrapper of {@link Questions#_validateProjectName} to be used as a Promise, outside
+   * {@link Inquirer}.
+   * @param {String} name The name to validate.
+   * @return {Promise<String,Error>}
+   * @access protected
+   * @ignore
+   */
   _validateProjectNameAsPromise(name) {
     const validation = this._validateProjectName(name);
     return validation === true ?
@@ -335,7 +453,11 @@ class Questions {
       Promise.reject(new Error(validation));
   }
 }
-
+/**
+ * The service provider that once registered on the dependency injection container
+ * will register an instance of {@link Questions} as the `questions` service.
+ * @type {Provider}
+ */
 const questions = provider((app) => {
   app.set('questions', () => new Questions(
     app.get('logger'),

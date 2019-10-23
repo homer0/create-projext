@@ -2,10 +2,28 @@ const clear = require('clear');
 const { provider } = require('jimple');
 const minimist = require('minimist');
 const { Spinner } = require('cli-spinner');
-
+/**
+ * This variable exists to avoid issues with the `no-magic-numbers` linting rule.
+ * This is used on {@link CLI#_createHeader} as a default parameter value.
+ * @ignore
+ */
 const HEADER_MIN_WIDTH = 32;
-
+/**
+ * The class in charge of handling the CLI of the application. It invokes the service
+ * that makes the questions and the one that generate the results.
+ */
 class CLI {
+  /**
+   * @param {Generator}  generator  To generate the files after asking the user for information.
+   * @param {Info}       info       To get information about the application. These are the
+   *                                contents of the application's package.json file.
+   * @param {Logger}     logger     To log messages on the console.
+   * @param {Questions}  questions  To actually ask the questions to the user.
+   * @param {Repository} repository To load the settings manifest that will be used to show the
+   *                                options for engines and frameworks.
+   * @param {Utils}      utils      To validate if the user is using Yarn or NPM and install
+   *                                dependencies.
+   */
   constructor(
     generator,
     info,
@@ -14,13 +32,56 @@ class CLI {
     repository,
     utils
   ) {
+    /**
+     * A local reference for the `generator` service.
+     * @type {Generator}
+     * @access protected
+     * @ignore
+     */
     this._generator = generator;
+    /**
+     * A local reference for the `info` service (the contents of the application's package.json
+     * file).
+     * @type {Info}
+     * @access protected
+     * @ignore
+     */
     this._info = info;
+    /**
+     * A local reference for the `logger` service.
+     * @type {Logger}
+     * @access protected
+     * @ignore
+     */
     this._logger = logger;
+    /**
+     * A local reference for the `questions` service.
+     * @type {Questions}
+     * @access protected
+     * @ignore
+     */
     this._questions = questions;
+    /**
+     * A local reference for the `repository` service.
+     * @type {Repository}
+     * @access protected
+     * @ignore
+     */
     this._repository = repository;
-
+    /**
+     * A local reference for the `utils` service.
+     * @type {Utils}
+     * @access protected
+     * @ignore
+     */
     this._utils = utils;
+    /**
+     * A list of the {@link CLIHandler} that can prevent the user from triggering the questions.
+     * For example: The help menu and the command to see the application's version.
+     * @type {Array}
+     * @access protected
+     * @ignore
+     */
     this._handlers = [
       {
         triggers: ['h', 'help'],
@@ -31,6 +92,13 @@ class CLI {
         fn: this._showVersion.bind(this),
       },
     ];
+    /**
+     * A list of the {@link CLIOption} the user can send to the questions in order to set defaults
+     * and speed up the process.
+     * @type {Array}
+     * @access protected
+     * @ignore
+     */
     this._options = [
       {
         triggers: ['r', 'rollup'],
@@ -79,8 +147,11 @@ class CLI {
       },
     ];
   }
-
-  run() {
+  /**
+   * Start the CLI.
+   * @return {Promise<undefined, Error>}
+   */
+  start() {
     const cmdArgsPosition = 2;
     const args = minimist(process.argv.slice(cmdArgsPosition));
     const handler = this._handlers.find(({ triggers }) => (
@@ -97,7 +168,11 @@ class CLI {
 
     return result;
   }
-
+  /**
+   * Shows the help menu on the console.
+   * @access protected
+   * @ignore
+   */
   _showHelp() {
     const bin = Object.keys(this._info.bin)[0].substr('create-'.length);
     const exec = this._utils.usesYarn() ? 'yarn create' : 'npm init';
@@ -115,11 +190,21 @@ class CLI {
 
     lines.forEach((line) => this._logger.log(line));
   }
-
+  /**
+   * Shows the application's version on the console.
+   * @access protected
+   * @ignore
+   */
   _showVersion() {
     this._logger.log(this._info.version);
   }
-
+  /**
+   * Creates an array of lines that when printed on the console will show a table
+   * with two columns, used to show the options of the CLI.
+   * @return {Array}
+   * @access protected
+   * @ignore
+   */
   _createOptionsTable() {
     const useOptions = this._options
     .filter((option) => !option.hidden)
@@ -145,7 +230,14 @@ class CLI {
       return `  ${label}${option.description}`;
     });
   }
-
+  /**
+   * Creates an array of lines that when printed on the console will show a small title header
+   * for the application's CLI.
+   * @param {Number} [minWidth=32] The minimum width for the header.
+   * @return {Array}
+   * @access protected
+   * @ignore
+   */
   _createHeader(minWidth = HEADER_MIN_WIDTH) {
     const lines = [
       `Projext setup - v${this._info.version}`,
@@ -178,7 +270,14 @@ class CLI {
       vBordersLines,
     ];
   }
-
+  /**
+   * This is the method that actually does the magic. It validates the options, defines the
+   * default values, asks the questions and generate the files.
+   * @param {Object} args The CLI arguments, parsed by {@link minimist}.
+   * @return {Promise<undefined,Error>}
+   * @access protected
+   * @ignore
+   */
   _askQuestions(args) {
     clear();
     this._logger.log(this._createHeader());
@@ -234,7 +333,15 @@ class CLI {
       return Promise.reject(error);
     });
   }
-
+  /**
+   * Generates the structure of a target without having to ask the user for additional information.
+   * This is used when the user sends the flag for 'quick mode'.
+   * @param {ProjectAnswers} projectInfo The information about the project.
+   * @param {CLIOptions}     options     The options parsed from the CLI arguments.
+   * @return {TargetAnswer}
+   * @access protected
+   * @ignore
+   */
   _getQuickTarget(projectInfo, options) {
     const target = {
       type: options.node ? 'node' : 'browser',
@@ -257,7 +364,15 @@ class CLI {
     target.types = types;
     return target;
   }
-
+  /**
+   * Validates the options parsed from the CLI arguments and generate the default values for
+   * the questions about the project.
+   * @param {CLIOptions} options  The options parsed from the CLI arguments.
+   * @param {?String}    [name]   A name for the project, sent as argument.
+   * @return {ProjectAnswers}
+   * @access protected
+   * @ignore
+   */
   _parseDefaults(options, name) {
     const result = {};
     if (options.angularjs) {
@@ -282,7 +397,13 @@ class CLI {
 
     return result;
   }
-
+  /**
+   * Parses the arguments sent to the CLI and generates a dictionary of boolean options.
+   * @param {Array} args The arguments sent to the CLI.
+   * @return {CLIOptions}
+   * @access protected
+   * @ignore
+   */
   _parseOptions(args) {
     return this._options.reduce(
       (acc, option) => {
@@ -296,7 +417,11 @@ class CLI {
     );
   }
 }
-
+/**
+ * The service provider that once registered on the dependency injection container
+ * will register an instance of {@link CLI} as the `cli` service.
+ * @type {Provider}
+ */
 const cli = provider((app) => {
   app.set('cli', () => new CLI(
     app.get('generator'),

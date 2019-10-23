@@ -79,10 +79,10 @@ describe('app:CreateProjext', () => {
     // Given
     let sut = null;
     const listenErrors = jest.fn();
-    const runCLI = jest.fn();
+    const startCLI = jest.fn();
     const get = jest.fn(() => ({
       listen: listenErrors,
-      run: runCLI,
+      start: startCLI,
     }));
     JimpleMock.mock('get', get);
     // When
@@ -91,6 +91,6 @@ describe('app:CreateProjext', () => {
     // Then
     expect(sut).toBeInstanceOf(CreateProjext);
     expect(listenErrors).toHaveBeenCalledTimes(1);
-    expect(runCLI).toHaveBeenCalledTimes(1);
+    expect(startCLI).toHaveBeenCalledTimes(1);
   });
 });

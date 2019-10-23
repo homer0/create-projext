@@ -4,7 +4,9 @@ const { generator } = require('./generator');
 const { questions } = require('./questions');
 const { repository } = require('./repository');
 const { utils } = require('./utils');
-
+/**
+ * @ignore
+ */
 module.exports = provider((app) => {
   app.register(cli);
   app.register(generator);

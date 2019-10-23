@@ -47,7 +47,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      sut.run()
+      sut.start()
       .then(() => {
         // Then
         expect(logger.log).toHaveBeenCalledTimes(1);
@@ -107,7 +107,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      sut.run()
+      sut.start()
       .then(() => {
         // Then
         expect(logger.log).toHaveBeenCalledTimes(expectedLog.length);
@@ -167,7 +167,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(logger.log).toHaveBeenCalledTimes(expectedLog.length);
@@ -264,7 +264,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);
@@ -384,7 +384,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);
@@ -458,7 +458,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .catch((result) => {
         // Then
         expect(result).toBe(error);
@@ -585,7 +585,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);
@@ -709,7 +709,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);
@@ -830,7 +830,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);
@@ -950,7 +950,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);
@@ -1072,7 +1072,7 @@ describe('service:CLI', () => {
         repository,
         utils
       );
-      return sut.run()
+      return sut.start()
       .then(() => {
         // Then
         expect(clear).toHaveBeenCalledTimes(1);

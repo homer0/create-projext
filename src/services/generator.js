@@ -2,12 +2,34 @@ const path = require('path');
 const fs = require('fs-extra');
 const { provider } = require('jimple');
 const ObjectUtils = require('wootils/shared/objectUtils');
-
+/**
+ * This is the class in charge of generating the files for the projects.
+ */
 class Generator {
+  /**
+   * @param {Utils} utils To stringify a projext configuration if needed.
+   */
   constructor(utils) {
+    /**
+     * A local reference for the `utils` service.
+     * @type {Utils}
+     * @access protected
+     * @ignore
+     */
     this._utils = utils;
   }
-
+  /**
+   * This the method that generates all the files necessary for a projext project.
+   * @param {Boolean}        createConfigFile Whether or not to write the targets
+   *                                          settings on a projext configuration
+   *                                          file or on the targets entry files.
+   * @param {Manifest}       manifest         The manifest settings to get the
+   *                                          packages that need to be installed.
+   * @param {ProjectAnswers} projectInfo      The information about the project.
+   * @param {Array}          targetsInfo      A list of the information of the
+   *                                          targets ({@link TargetAnswer}).
+   * @return {Promise<undefined, Error>}
+   */
   generateFiles(
     createConfigFile,
     manifest,
@@ -56,12 +78,31 @@ class Generator {
       Promise.resolve()
     );
   }
-
+  /**
+   * Writes a file on the filesystem. The reason of this wrapper is that it
+   * first validates that the directory where the file needs to be written exists.
+   * @param {Object} file          The file information.
+   * @param {String} file.filepath The path for the file.
+   * @param {String} file.contents The contents of the file.
+   * @return {Promise<undefined,Error>}
+   * @access protected
+   * @ignore
+   */
   _writeFile(file) {
     return fs.ensureDir(path.dirname(file.filepath))
     .then(() => fs.writeFile(file.filepath, file.contents));
   }
-
+  /**
+   * Generates the information for all the targets entry files.
+   * @param {String}  sourcePath    Where the target file will be created.
+   * @param {Boolean} writeConfig   If the settings of the target should be added as
+   *                                comments on the entry file.
+   * @param {Array}   targetsConfig A list of the information of the targets
+   *                                ({@link TargetConfig}).
+   * @return {Array} A list of objects with the properties `filepath` and `contents`.
+   * @access protected
+   * @ignore
+   */
   _generateTargetsFiles(
     sourcePath,
     writeConfig,
@@ -85,7 +126,14 @@ class Generator {
       };
     });
   }
-
+  /**
+   * Generates a list of lines for the settings comment a target will include on its
+   * entry file in order for project to detect them as configuration.
+   * @param {TargetConfig} target The target information.
+   * @return {Array}
+   * @access protected
+   * @ignore
+   */
   _getTargetConfigLines(target) {
     const properties = [
       'type',
@@ -124,7 +172,14 @@ class Generator {
 
     return result;
   }
-
+  /**
+   * Generates a projext configuration based on a list of target settings.
+   * @param {Array} targetsConfig A list of the information of the targets
+   *                              ({@link TargetConfig}).
+   * @return {Object}
+   * @access protected
+   * @ignore
+   */
   _generateProjextConfig(targetsConfig) {
     const targets = targetsConfig.reduce(
       (newConfig, target) => {
@@ -140,7 +195,17 @@ class Generator {
 
     return { targets };
   }
-
+  /**
+   * Normalizes the information of a target into configuration settings.
+   * @param {?Framework}  framework    The information of a selected framework for
+   *                                   the project.
+   * @param {String}       projectName The name of the project, to use as fallback
+   *                                   for the target name.
+   * @param {TargetAnswer} targetsInfo The target information.
+   * @return {TargetConfig}
+   * @access protected
+   * @ignore
+   */
   _getTargetsConfig(framework, projectName, targetsInfo) {
     const useFolder = targetsInfo.length > 1;
     return targetsInfo.map((target) => {
@@ -187,7 +252,20 @@ class Generator {
       return targetConfig;
     });
   }
-
+  /**
+   * Generates a `package.json` for the project.
+   * @param {String}     projectName  The name of the project.
+   * @param {Engine}     engine       The selected engine for the project.
+   * @param {?Framework} framework    The information of a selected framework
+   *                                  for the project.
+   * @param {Manifest}   manifest     The manifest settings to get the
+   *                                  packages that need to be installed.
+   * @param {Array}      targetsInfo  A list of the information of the targets
+   *                                  ({@link TargetAnswer}).
+   * @return {Object} The contents of the project `package.json`
+   * @access protected
+   * @ignore
+   */
   _getPackageJSON(
     projectName,
     engine,
@@ -255,7 +333,11 @@ class Generator {
     };
   }
 }
-
+/**
+ * The service provider that once registered on the dependency injection container
+ * will register an instance of {@link Generator} as the `generator` service.
+ * @type {Provider}
+ */
 const generator = provider((app) => {
   app.set('generator', () => new Generator(
     app.get('utils')
