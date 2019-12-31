@@ -3,7 +3,7 @@
     "packages": [
       {
         "name": "projext",
-        "version": "7.1.1"
+        "version": "8.0.0"
       }
     ]
   },
@@ -23,7 +23,7 @@
       "name": "webpack",
       "package": {
         "name": "projext-plugin-webpack",
-        "version": "9.2.0"
+        "version": "10.0.0"
       },
       "default": true
     },
@@ -32,7 +32,7 @@
       "name": "Rollup",
       "package": {
         "name": "projext-plugin-rollup",
-        "version": "9.2.0"
+        "version": "6.0.0"
       }
     }
   ],
@@ -45,18 +45,18 @@
       "packages": {
         "webpack": {
           "name": "projext-plugin-webpack-angularjs",
-          "version": "5.0.0"
+          "version": "6.0.0"
         },
         "rollup": {
           "name": "projext-plugin-rollup-angularjs",
-          "version": "3.0.0"
+          "version": "4.0.0"
         }
       },
       "template": {
         "csr": {
           "dependencies": {},
           "devDependencies": {
-            "angular": "^1.7.8"
+            "angular": "^1.7.9"
           }
         }
       }
@@ -69,7 +69,7 @@
       "packages": {
         "webpack": {
           "name": "projext-plugin-webpack-aurelia",
-          "version": "2.1.0"
+          "version": "3.0.0"
         }
       },
       "template": {
@@ -99,27 +99,29 @@
       "packages": {
         "webpack": {
           "name": "projext-plugin-webpack-react",
-          "version": "5.0.0"
+          "version": "6.0.0"
         },
         "rollup": {
           "name": "projext-plugin-rollup-react",
-          "version": "3.0.0"
+          "version": "4.0.0"
         }
       },
       "template": {
         "ssr": {
           "dependencies": {
-            "react-dom": "^16.10.2"
+            "react-dom": "^16.12.0"
           },
           "devDependencies": {
-            "react": "^16.10.2"
+            "react": "^16.12.0",
+            "@types/react": "^16.9.17"
           }
         },
         "csr": {
           "dependencies": {},
           "devDependencies": {
-            "react": "^16.10.2",
-            "react-dom": "^16.10.2"
+            "react": "^16.12.0",
+            "react-dom": "^16.12.0",
+            "@types/react": "^16.9.17"
           }
         }
       }
