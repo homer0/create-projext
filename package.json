@@ -10,24 +10,24 @@
       "clear": "0.1.0",
       "cli-spinner": "0.2.10",
       "fs-extra": "^8.1.0",
-      "inquirer": "^7.0.0",
+      "inquirer": "^7.0.1",
       "jimple": "^1.5.0",
       "minimist": "^1.2.0",
       "node-fetch": "^2.6.0",
-      "wootils": "^2.6.5"
+      "wootils": "^3.0.1"
     },
     "devDependencies": {
-      "coveralls": "^3.0.7",
+      "coveralls": "^3.0.9",
       "esdoc": "^1.1.0",
       "esdoc-node": "1.0.4",
       "esdoc-standard-plugin": "^1.0.0",
-      "eslint": "^6.5.1",
-      "eslint-plugin-homer0": "^2.0.1",
-      "husky": "^3.0.9",
+      "eslint": "^6.8.0",
+      "eslint-plugin-homer0": "^3.0.0",
+      "husky": "^3.1.0",
       "jasmine-expect": "^4.0.3",
-      "jest-ex": "^6.1.1",
+      "jest-ex": "^7.0.1",
       "jest-cli": "^24.9.0",
-      "leasot": "^8.2.0"
+      "leasot": "^9.3.1"
     },
     "engine-strict": true,
     "engines": {
