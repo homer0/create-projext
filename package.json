@@ -1,54 +1,54 @@
 {
-    "name": "create-projext",
-    "description": "Setup projext using npm init or yarn create",
-    "homepage": "https://projextjs.com",
-    "version": "2.0.1",
-    "repository": "homer0/create-projext",
-    "author": "Leonardo Apiwan (@homer0) <me@homer0.com>",
-    "license": "MIT",
-    "dependencies": {
-      "clear": "0.1.0",
-      "cli-spinner": "0.2.10",
-      "fs-extra": "^9.0.0",
-      "inquirer": "^7.1.0",
-      "jimple": "^1.5.0",
-      "minimist": "^1.2.5",
-      "node-fetch": "^2.6.0",
-      "wootils": "^3.0.3"
-    },
-    "devDependencies": {
-      "coveralls": "^3.0.11",
-      "esdoc": "^1.1.0",
-      "esdoc-node": "1.0.4",
-      "esdoc-standard-plugin": "^1.0.0",
-      "eslint": "^6.8.0",
-      "eslint-plugin-homer0": "^3.0.3",
-      "husky": "^4.2.5",
-      "jasmine-expect": "^4.0.3",
-      "jest-ex": "^8.0.1",
-      "jest-cli": "^25.3.0",
-      "leasot": "^10.2.0"
-    },
-    "engine-strict": true,
-    "engines": {
-      "node": ">=10.13.0"
-    },
-    "main": "src/index.js",
-    "bin": {
-      "create-projext": "./src/bin/create-projext"
-    },
-    "husky": {
-      "hooks": {
-        "pre-commit": "./utils/hooks/pre-commit",
-        "post-merge": "./utils/hooks/post-merge"
-      }
-    },
-    "scripts": {
-      "start": "node src/index.js",
-      "test": "./utils/scripts/test",
-      "lint": "./utils/scripts/lint",
-      "lint:full": "./utils/scripts/lint-full",
-      "docs": "./utils/scripts/docs",
-      "todo": "./utils/scripts/todo"
+  "name": "create-projext",
+  "description": "Setup projext using npm init or yarn create",
+  "homepage": "https://projextjs.com",
+  "version": "2.0.1",
+  "repository": "homer0/create-projext",
+  "author": "Leonardo Apiwan (@homer0) <me@homer0.com>",
+  "license": "MIT",
+  "dependencies": {
+    "clear": "0.1.0",
+    "cli-spinner": "0.2.10",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^7.1.0",
+    "jimple": "^1.5.0",
+    "minimist": "^1.2.5",
+    "node-fetch": "^2.6.0",
+    "wootils": "^3.0.3"
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.11",
+    "esdoc": "^1.1.0",
+    "esdoc-node": "1.0.4",
+    "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-homer0": "^3.0.3",
+    "husky": "^4.2.5",
+    "jasmine-expect": "^4.0.3",
+    "jest-ex": "^8.0.1",
+    "jest-cli": "^25.3.0",
+    "leasot": "^10.2.0"
+  },
+  "engine-strict": true,
+  "engines": {
+    "node": ">=10.13.0"
+  },
+  "main": "src/index.js",
+  "bin": {
+    "create-projext": "./src/bin/create-projext"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "./utils/hooks/pre-commit",
+      "post-merge": "./utils/hooks/post-merge"
     }
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "./utils/scripts/test",
+    "lint": "./utils/scripts/lint",
+    "lint:full": "./utils/scripts/lint-full",
+    "docs": "./utils/scripts/docs",
+    "todo": "./utils/scripts/todo"
+  }
 }
